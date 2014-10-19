@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -45,7 +46,8 @@ public class EntityNBTPacket extends AbstractPacket {
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) throws IOException {
 		ByteBufInputStream bis = new ByteBufInputStream(buffer);
 		entityID = bis.readInt();
-		tag = NBTHelper.nbtRead(bis);
+		DataInputStream dis = new DataInputStream(bis);
+		tag = NBTHelper.nbtRead(dis);
 	}
 
 	@Override
