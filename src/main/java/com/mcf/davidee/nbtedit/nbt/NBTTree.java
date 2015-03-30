@@ -33,10 +33,8 @@ public class NBTTree {
 		return node != root;
 	}
 	
-	public boolean delete(Node<NamedNBT> node){
-		if (node == null || node == root)
-			return false;
-		return deleteNode(node,root);
+	public boolean delete(Node<NamedNBT> node) {
+		return !(node == null || node == root) && deleteNode(node, root);
 	}
 	
 	private boolean deleteNode(Node<NamedNBT> toDelete, Node<NamedNBT> cur){
@@ -55,7 +53,7 @@ public class NBTTree {
 	
 	
 	private void construct() {
-		root = new Node<NamedNBT>(new NamedNBT("ROOT", (NBTTagCompound)baseTag.copy()));
+		root = new Node<>(new NamedNBT("ROOT", (NBTTagCompound)baseTag.copy()));
 		addChildrenToTree(root);
 		sort(root);
 	}
@@ -72,7 +70,7 @@ public class NBTTree {
 			Map<String,NBTBase> map =  NBTHelper.getMap((NBTTagCompound)tag);
 			for (Entry<String,NBTBase> entry : map.entrySet()){
 				NBTBase base = entry.getValue();
-				Node<NamedNBT> child = new Node<NamedNBT>(parent, new NamedNBT(entry.getKey(), base));
+				Node<NamedNBT> child = new Node<>(parent, new NamedNBT(entry.getKey(), base));
 				parent.addChild(child);
 				addChildrenToTree(child);
 			}
@@ -82,7 +80,7 @@ public class NBTTree {
 			NBTTagList list = (NBTTagList)tag;
 			for (int i =0; i < list.tagCount(); ++ i){
 				NBTBase base = NBTHelper.getTagAt(list, i);
-				Node<NamedNBT> child = new Node<NamedNBT>(parent, new NamedNBT(base));
+				Node<NamedNBT> child = new Node<>(parent, new NamedNBT(base));
 				parent.addChild(child);
 				addChildrenToTree(child);
 			}
@@ -143,7 +141,7 @@ public class NBTTree {
 	}
 	
 	public List<String> toStrings(){
-		List<String> s = new ArrayList<String>();
+		List<String> s = new ArrayList<>();
 		toStrings(s,root,0);
 		return s;
 	}

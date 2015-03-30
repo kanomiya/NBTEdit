@@ -13,6 +13,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -51,7 +52,7 @@ public class GuiNBTTree extends Gui{
 	private GuiNBTButton[] buttons;
 
 	private final int X_GAP = 10, START_X = 10, START_Y = 30;
-	private final int Y_GAP = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT+2;
+	private final int Y_GAP = Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT+2;
 
 	private int y, yClick, bottom, width, height, heightDiff, offset;
 
@@ -76,7 +77,7 @@ public class GuiNBTTree extends Gui{
 		this.tree = tree;
 		yClick = -1;
 		focusedSlotIndex = -1;
-		nodes = new ArrayList<GuiNBTNode>();
+		nodes = new ArrayList<>();
 		buttons = new GuiNBTButton[16];
 		saves = new GuiSaveSlotButton[7];
 	}
@@ -229,7 +230,7 @@ public class GuiNBTTree extends Gui{
 				return true;
 			}
 		}
-		return fc.hasParent() ? checkValidFocus(fc.getParent()) : false;
+		return fc.hasParent() && checkValidFocus(fc.getParent());
 	}
 
 	private void addNodes(Node<NamedNBT> node, int x) {
@@ -322,19 +323,19 @@ public class GuiNBTTree extends Gui{
 
 	protected void overlayBackground(int par1, int par2, int par3, int par4)
 	{
-		Tessellator var5 = Tessellator.instance;
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 		mc.renderEngine.bindTexture(optionsBackground);
-		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture( "/gui/background.png"));
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		float var6 = 32.0F;
-		var5.startDrawingQuads();
-		var5.setColorRGBA_I(4210752, par4);
-		var5.addVertexWithUV(0.0D, (double)par2, 0.0D, 0.0D, (double)((float)par2 / var6));
-		var5.addVertexWithUV((double)this.width, (double)par2, 0.0D, (double)((float)this.width / var6), (double)((float)par2 / var6));
-		var5.setColorRGBA_I(4210752, par3);
-		var5.addVertexWithUV((double)this.width, (double)par1, 0.0D, (double)((float)this.width / var6), (double)((float)par1 / var6));
-		var5.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / var6));
-		var5.draw();
+		worldRenderer.startDrawingQuads();
+		worldRenderer.setColorRGBA_I(4210752, par4);
+		worldRenderer.addVertexWithUV(0.0D, (double)par2, 0.0D, 0.0D, (double)((float)par2 / var6));
+		worldRenderer.addVertexWithUV((double)this.width, (double)par2, 0.0D, (double)((float)this.width / var6), (double)((float)par2 / var6));
+		worldRenderer.setColorRGBA_I(4210752, par3);
+		worldRenderer.addVertexWithUV((double)this.width, (double)par1, 0.0D, (double)((float)this.width / var6), (double)((float)par1 / var6));
+		worldRenderer.addVertexWithUV(0.0D, (double)par1, 0.0D, 0.0D, (double)((float)par1 / var6));
+		tessellator.draw();
 	}
 
 	public void mouseClicked(int mx, int my) {
@@ -360,7 +361,7 @@ public class GuiNBTTree extends Gui{
 					if (button.inBoundsOfX(mx, my)){
 						button.reset();
 						NBTEdit.getSaveStates().save();
-						mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+						mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 						return;
 					}
 					if (button.inBounds(mx, my)){
@@ -408,7 +409,7 @@ public class GuiNBTTree extends Gui{
 				button.save.tag.setTag(name, base.copy());
 			button.saved();
 			NBTEdit.getSaveStates().save();
-			mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 		}
 		else{ //Paste into
 			Map<String, NBTBase> nbtMap = NBTHelper.getMap(button.save.tag);
@@ -420,19 +421,15 @@ public class GuiNBTTree extends Gui{
 				if (focused == null)
 					setFocused(tree.getRoot());
 				
-				Entry<String, NBTBase> firstEntry = null;
-				for(Entry<String, NBTBase> entry : nbtMap.entrySet()) {
-					firstEntry = entry;
-					break;
-				}
-
+				Entry<String, NBTBase> firstEntry =  (Entry<String, NBTBase>) nbtMap.entrySet().toArray()[0];
+				assert firstEntry != null;
 				String name = firstEntry.getKey();
 				NBTBase nbt = firstEntry.getValue().copy();
 				if (focused == tree.getRoot() && nbt instanceof NBTTagCompound && name.equals("ROOT")){
 					setFocused(null);
 					tree = new NBTTree((NBTTagCompound)nbt);
 					initGUI();
-					mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 				}
 				else if (canAddToParent(focused.getObject().getNBT(), nbt)){
 					focused.setDrawChildren(true);
@@ -447,7 +444,7 @@ public class GuiNBTTree extends Gui{
 					tree.sort(node);
 					setFocused(node);
 					initGUI(true);
-					mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 				}
 			}
 		}
@@ -472,7 +469,7 @@ public class GuiNBTTree extends Gui{
 			if (focused.getObject().getNBT() instanceof NBTTagList){
 				NBTBase nbt = NBTStringHelper.newTag(button.getId());
 				if (nbt != null){
-					Node<NamedNBT> newNode = new Node<NamedNBT>(focused, new NamedNBT("",nbt));
+					Node<NamedNBT> newNode = new Node<>(focused, new NamedNBT("",nbt));
 					children.add(newNode);
 					setFocused(newNode);
 				}
@@ -501,7 +498,7 @@ public class GuiNBTTree extends Gui{
 	}
 
 	private Node<NamedNBT> insert(NamedNBT nbt){
-		Node<NamedNBT> newNode = new Node<NamedNBT>(focused, nbt);
+		Node<NamedNBT> newNode = new Node<>(focused, nbt);
 
 		if (focused.hasChildren()){
 			List<Node<NamedNBT>> children = focused.getChildren();
@@ -547,7 +544,7 @@ public class GuiNBTTree extends Gui{
 			NBTBase base = focused.getObject().getNBT();
 			if (focused.hasChildren() &&  (base instanceof NBTTagCompound || base instanceof NBTTagList)){
 				focused.setDrawChildren(!focused.shouldDrawChildren());
-				int index = -1;
+				int index;
 				
 				if(focused.shouldDrawChildren() && (index = indexOf(focused)) != -1)
 					offset =  (START_Y+1) - nodes.get(index).y + offset;
@@ -568,15 +565,13 @@ public class GuiNBTTree extends Gui{
 			return true;
 		if (parent instanceof NBTTagList){
 			NBTTagList list = (NBTTagList) parent;
-			return list.tagCount() == 0 || list.func_150303_d() == child.getId();
+			return list.tagCount() == 0 || list.getTagType() == child.getId();
 		}
 		return false;
 	}
 
 	private boolean canPaste() {
-		if (NBTEdit.clipboard != null && focused != null)
-			return canAddToParent(focused.getObject().getNBT(), NBTEdit.clipboard.getNBT());
-		return false;
+		return NBTEdit.clipboard != null && focused != null && canAddToParent(focused.getObject().getNBT(), NBTEdit.clipboard.getNBT());
 	}
 	
 	private void paste() {
@@ -586,7 +581,7 @@ public class GuiNBTTree extends Gui{
 			NamedNBT namedNBT = NBTEdit.clipboard.copy();
 			if (focused.getObject().getNBT() instanceof NBTTagList){
 				namedNBT.setName("");
-				Node<NamedNBT> node = new Node<NamedNBT>(focused, namedNBT);
+				Node<NamedNBT> node = new Node<>(focused, namedNBT);
 				focused.addChild(node);
 				tree.addChildrenToTree(node);
 				tree.sort(node);

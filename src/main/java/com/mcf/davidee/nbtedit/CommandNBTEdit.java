@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import com.mcf.davidee.nbtedit.packets.EntityRequestPacket;
 import com.mcf.davidee.nbtedit.packets.MouseOverPacket;
 import com.mcf.davidee.nbtedit.packets.TileRequestPacket;
+import net.minecraft.util.BlockPos;
 
 
 public class CommandNBTEdit extends CommandBase{
@@ -26,19 +28,19 @@ public class CommandNBTEdit extends CommandBase{
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] var2) {
+	public void processCommand(ICommandSender sender, String[] var2) throws NumberInvalidException, WrongUsageException {
 		if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP)sender;
 
 			if (var2.length == 3) {
-				int x = parseInt(sender,var2[0]);
-				int y = parseInt(sender,var2[1]);
-				int z = parseInt(sender,var2[2]);
+				int x = parseInt(var2[0]);
+				int y = parseInt(var2[1]);
+				int z = parseInt(var2[2]);
 				NBTEdit.log(Level.FINE, sender.getCommandSenderName() + " issued command \"/nbtedit " + x + " " + y + " " + z + "\"");
-				new TileRequestPacket(x, y, z).handleServerSide(player);
+				new TileRequestPacket(new BlockPos(x,y,z)).handleServerSide(player);
 			}
 			else if (var2.length == 1) {
-				int entityID = (var2[0].equalsIgnoreCase("me")) ? player.getEntityId() : parseIntWithMin(sender, var2[0], 0);
+				int entityID = (var2[0].equalsIgnoreCase("me")) ? player.getEntityId() : parseInt(var2[0], 0);
 				NBTEdit.log(Level.FINE, sender.getCommandSenderName() + " issued command \"/nbtedit " + entityID +  "\"");
 				new EntityRequestPacket(entityID).handleServerSide(player);
 			}

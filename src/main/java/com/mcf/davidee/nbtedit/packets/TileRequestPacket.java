@@ -10,33 +10,30 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 
 public class TileRequestPacket extends AbstractPacket {
 	
-	private int x, y, z;
+	private BlockPos pos;
 	
 	public TileRequestPacket() {
 		
 	}
 	
-	public TileRequestPacket(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public TileRequestPacket(BlockPos pos) {
+		this.pos = pos;
 	}
 
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		buffer.writeInt(x);
-		buffer.writeInt(y);
-		buffer.writeInt(z);
+		buffer.writeInt(pos.getX());
+		buffer.writeInt(pos.getY());
+		buffer.writeInt(pos.getZ());
 	}
 
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
-		x = buffer.readInt();
-		y = buffer.readInt();
-		z = buffer.readInt();
+		pos = new BlockPos(buffer.readInt(), buffer.readInt(), buffer.readInt());
 	}
 
 	@Override
@@ -46,14 +43,14 @@ public class TileRequestPacket extends AbstractPacket {
 
 	@Override
 	public void handleServerSide(EntityPlayerMP player) {
-		TileEntity te = player.worldObj.getTileEntity(x, y, z);
+		TileEntity te = player.worldObj.getTileEntity(pos);
 		if (te != null) {
 			NBTTagCompound tag = new NBTTagCompound();
 			te.writeToNBT(tag);
-			NBTEdit.DISPATCHER.sendTo(new TileNBTPacket(x, y, z, tag), player);
+			NBTEdit.DISPATCHER.sendTo(new TileNBTPacket(pos, tag), player);
 		}
 		else
-			sendMessageToPlayer(player, SECTION_SIGN + "cError - There is no TileEntity at ("+x+","+y+","+z+")");
+			sendMessageToPlayer(player, SECTION_SIGN + "cError - There is no TileEntity at "+pos.getX()+","+pos.getY()+","+pos.getZ());
 	}
 
 }

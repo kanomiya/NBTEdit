@@ -23,7 +23,6 @@ public class GuiCharacterButton extends Gui{
 	}
 	public void draw(int mx, int my){
 		mc.renderEngine.bindTexture(GuiNBTNode.WIDGET_TEXTURE);
-		
 		if(inBounds(mx,my))
 			Gui.drawRect(x, y, x+WIDTH, y+HEIGHT, 0x80ffffff);
 		
@@ -36,10 +35,6 @@ public class GuiCharacterButton extends Gui{
 	
 	public void setEnabled(boolean aFlag){
 		enabled = aFlag;
-	}
-	
-	public boolean isEnabled(){
-		return enabled;
 	}
 	
 	public boolean inBounds(int mx, int my){

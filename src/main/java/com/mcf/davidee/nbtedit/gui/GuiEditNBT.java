@@ -62,8 +62,8 @@ public class GuiEditNBT extends Gui{
 		newLine = new GuiCharacterButton((byte)1,x+WIDTH-1,y+50);
 		String sKey = (key == null) ? node.getObject().getName() : key.getText();
 		String sValue = (value == null) ? getValue(nbt) : value.getText();
-		this.key = new GuiTextField(mc.fontRenderer,x+46,y+18,116,15,false);
-		this.value = new GuiTextField(mc.fontRenderer,x+46,y+44,116,15,true);
+		this.key = new GuiTextField(mc.fontRendererObj,x+46,y+18,116,15,false);
+		this.value = new GuiTextField(mc.fontRendererObj,x+46,y+44,116,15,true);
 		
 		key.setText(sKey);
 		key.setEnableBackgroundDrawing(false);
@@ -130,9 +130,9 @@ public class GuiEditNBT extends Gui{
 		cancel.drawButton(mc, mx, my);
 
 		if (kError != null)
-			drawCenteredString(mc.fontRenderer, kError, x+WIDTH/2, y+4, 0xFF0000);
+			drawCenteredString(mc.fontRendererObj, kError, x+WIDTH/2, y+4, 0xFF0000);
 		if (vError != null)
-			drawCenteredString(mc.fontRenderer,vError,x+WIDTH/2,y+32,0xFF0000);
+			drawCenteredString(mc.fontRendererObj,vError,x+WIDTH/2,y+32,0xFF0000);
 
 		newLine.draw(mx, my);
 		section.draw(mx, my);
@@ -260,7 +260,7 @@ public class GuiEditNBT extends Gui{
 		switch(base.getId()){
 		case 7:
 			String s = "";
-			for (byte b : ((NBTTagByteArray)base).func_150292_c() /*byteArray*/){
+			for (byte b : ((NBTTagByteArray)base).getByteArray()){
 				s += b + " ";
 			}
 			return s;
@@ -270,7 +270,7 @@ public class GuiEditNBT extends Gui{
 			return "TagCompound";
 		case 11:
 			String i = "";
-			for (int a : ((NBTTagIntArray)base).func_150302_c() /*intArray*/){
+			for (int a : ((NBTTagIntArray)base).getIntArray()){
 				i += a + " ";
 			}
 			return i;

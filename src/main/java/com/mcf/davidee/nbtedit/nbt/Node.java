@@ -17,7 +17,7 @@ public class Node<T> {
 	}
 	
 	public Node(T obj){
-		children = new ArrayList<Node<T>>();
+		children = new ArrayList<>();
 		this.obj = obj;
 	}
 	
@@ -35,7 +35,7 @@ public class Node<T> {
 	
 	public Node(Node<T> parent, T obj){
 		this.parent = parent;
-		children = new ArrayList<Node<T>>();
+		children = new ArrayList<>();
 		this.obj = obj;
 	}
 	

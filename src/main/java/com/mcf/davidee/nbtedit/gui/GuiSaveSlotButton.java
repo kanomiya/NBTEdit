@@ -39,22 +39,18 @@ public class GuiSaveSlotButton extends Gui {
 
 
 	public void draw(int mx, int my){
-		/*
-		int color = (inBounds(mx,my)) ? 0x80ffffff : 0x80000000;
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.drawRect(x, y, x+width, y+HEIGHT, color);*/
 
 		int textColor = ((inBounds(mx,my))) ? 16777120 : 0xffffff;
 		renderVanillaButton(x,y,0,66,width,HEIGHT);
-		drawCenteredString(mc.fontRenderer, text, x + width/2, y + 6, textColor);
+		drawCenteredString(mc.fontRendererObj, text, x + width/2, y + 6, textColor);
 		if (tickCount != -1 && tickCount / 6 % 2 == 0){
-			mc.fontRenderer.drawStringWithShadow("_", x+(width+mc.fontRenderer.getStringWidth(text))/2+1, y+6, 0xffffff);
+			mc.fontRendererObj.drawStringWithShadow("_", x+(width+mc.fontRendererObj.getStringWidth(text))/2+1, y+6, 0xffffff);
 		}
 
 		if (xVisible){
 			textColor = ((inBoundsOfX(mx,my))) ? 16777120 : 0xffffff;
 			renderVanillaButton(leftBoundOfX(),topBoundOfX(),0,66,X_SIZE,X_SIZE);
-			drawCenteredString(mc.fontRenderer, "x", x-GAP-X_SIZE/2, y + 6, textColor);
+			drawCenteredString(mc.fontRendererObj, "x", x-GAP-X_SIZE/2, y + 6, textColor);
 		}
 	}
 	
@@ -89,7 +85,7 @@ public class GuiSaveSlotButton extends Gui {
 	}
 
 	private void updatePosition(){
-		width = mc.fontRenderer.getStringWidth(text)+24;
+		width = mc.fontRendererObj.getStringWidth(text)+24;
 		if (width % 2 == 1)
 			++width;
 		width = MathHelper.clamp_int(width, MIN_WIDTH, MAX_WIDTH);

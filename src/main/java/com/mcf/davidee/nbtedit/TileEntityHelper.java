@@ -23,7 +23,7 @@ public class TileEntityHelper {
 	}
 	
 	public static Set<Field> asSet(Field[] a, Field[] b){
-		HashSet<Field> s = new HashSet<Field>();
+		HashSet<Field> s = new HashSet<>();
 		Collections.addAll(s, a);
 		Collections.addAll(s, b);
 		return s;

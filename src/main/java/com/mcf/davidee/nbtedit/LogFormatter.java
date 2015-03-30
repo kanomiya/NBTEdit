@@ -17,12 +17,12 @@ public final class LogFormatter extends Formatter
 	{
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(dateFormat.format(Long.valueOf(record.getMillis())));
-		sb.append(" [" + record.getLevel().getLocalizedName() + "] ");
+		sb.append(dateFormat.format(record.getMillis()));
+		sb.append(" [").append(record.getLevel().getLocalizedName()).append("] ");
 
 		sb.append(record.getMessage());
 		sb.append(SEP);
-		Throwable thr = record.getThrown();
+		@SuppressWarnings("ThrowableResultOfMethodCallIgnored") Throwable thr = record.getThrown();
 
 		if (thr != null)
 		{

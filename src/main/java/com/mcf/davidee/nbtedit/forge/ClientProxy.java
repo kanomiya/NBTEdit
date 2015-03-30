@@ -5,12 +5,14 @@ import java.io.File;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,8 +23,8 @@ import com.mcf.davidee.nbtedit.NBTEdit;
 import com.mcf.davidee.nbtedit.gui.GuiEditNBTTree;
 import com.mcf.davidee.nbtedit.nbt.SaveStates;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ClientProxy extends CommonProxy {
 
@@ -45,8 +47,8 @@ public class ClientProxy extends CommonProxy {
 	}
 	
 	@Override
-	public void openEditGUI(int x, int y, int z, NBTTagCompound tag) {
-		Minecraft.getMinecraft().displayGuiScreen(new GuiEditNBTTree(x, y, z, tag));
+	public void openEditGUI(BlockPos pos, NBTTagCompound tag) {
+		Minecraft.getMinecraft().displayGuiScreen(new GuiEditNBTTree(pos, tag));
 	}
 
 	@SubscribeEvent
@@ -57,16 +59,17 @@ public class ClientProxy extends CommonProxy {
 			Entity e = screen.getEntity();
 			
 			if (e != null && e.isEntityAlive())
-				drawBoundingBox(event.context, event.partialTicks,e.boundingBox);
+				drawBoundingBox(event.context, event.partialTicks,e.getBoundingBox());
 			else if (screen.isTileEntity()){
 				int x = screen.getBlockX();
 				int y = screen.y;
 				int z = screen.z;
 				World world = Minecraft.getMinecraft().theWorld;
-				Block b = world.getBlock(x, y, z);
+				BlockPos pos = new BlockPos(x, y, z);
+				Block b = world.getBlockState(pos).getBlock();
 				if (b != null) {
-					b.setBlockBoundsBasedOnState(world, x,y,z);
-					drawBoundingBox(event.context,event.partialTicks, b.getSelectedBoundingBoxFromPool(world,x, y,z));
+					b.setBlockBoundsBasedOnState(world, pos);
+					drawBoundingBox(event.context, event.partialTicks, b.getSelectedBoundingBox(world, pos));
 				}
 			}
 		}
@@ -76,51 +79,52 @@ public class ClientProxy extends CommonProxy {
 		if (aabb == null)
 			return;
 
-		EntityLivingBase player = Minecraft.getMinecraft().renderViewEntity;
+		Entity player = Minecraft.getMinecraft().getRenderViewEntity();
 
 		double var8 = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double)f;
 		double var10 = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double)f;
 		double var12 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double)f;
 
-		aabb = aabb.getOffsetBoundingBox(-var8, -var10, -var12);
+		aabb = aabb.addCoord(-var8, -var10, -var12);
 
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(1.0F, 0.0F, 0.0F, .5F);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.color(1.0F, 0.0F, 0.0F, .5F);
 		GL11.glLineWidth(3.5F);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glDepthMask(false);
+		GlStateManager.disableTexture2D();
+		GlStateManager.depthMask(false);
 
-		Tessellator var2 = Tessellator.instance;
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 
-		var2.startDrawing(3);
-		var2.addVertex(aabb.minX, aabb.minY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.minY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.minY, aabb.maxZ);
-		var2.addVertex(aabb.minX, aabb.minY, aabb.maxZ);
-		var2.addVertex(aabb.minX, aabb.minY, aabb.minZ);
-		var2.draw();
-		var2.startDrawing(3);
-		var2.addVertex(aabb.minX, aabb.maxY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.maxY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.maxY, aabb.maxZ);
-		var2.addVertex(aabb.minX, aabb.maxY, aabb.maxZ);
-		var2.addVertex(aabb.minX, aabb.maxY, aabb.minZ);
-		var2.draw();
-		var2.startDrawing(1);
-		var2.addVertex(aabb.minX, aabb.minY, aabb.minZ);
-		var2.addVertex(aabb.minX, aabb.maxY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.minY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.maxY, aabb.minZ);
-		var2.addVertex(aabb.maxX, aabb.minY, aabb.maxZ);
-		var2.addVertex(aabb.maxX, aabb.maxY, aabb.maxZ);
-		var2.addVertex(aabb.minX, aabb.minY, aabb.maxZ);
-		var2.addVertex(aabb.minX, aabb.maxY, aabb.maxZ);
-		var2.draw();
+		worldRenderer.startDrawing(3);
+		worldRenderer.addVertex(aabb.minX, aabb.minY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.minY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.minY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.minX, aabb.minY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.minX, aabb.minY, aabb.minZ);
+		tessellator.draw();
+		worldRenderer.startDrawing(3);
+		worldRenderer.addVertex(aabb.minX, aabb.maxY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.maxY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.maxY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.minX, aabb.maxY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.minX, aabb.maxY, aabb.minZ);
+		tessellator.draw();
+		worldRenderer.startDrawing(1);
+		worldRenderer.addVertex(aabb.minX, aabb.minY, aabb.minZ);
+		worldRenderer.addVertex(aabb.minX, aabb.maxY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.minY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.maxY, aabb.minZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.minY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.maxX, aabb.maxY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.minX, aabb.minY, aabb.maxZ);
+		worldRenderer.addVertex(aabb.minX, aabb.maxY, aabb.maxZ);
+		tessellator.draw();
 
-		GL11.glDepthMask(true);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
+		GlStateManager.depthMask(true);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
 
 	}
 }
