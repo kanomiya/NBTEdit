@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 
 public class TileNBTUpdatePacket extends TileNBTPacket {
 
@@ -13,14 +14,14 @@ public class TileNBTUpdatePacket extends TileNBTPacket {
 		super();
 	}
 
-	public TileNBTUpdatePacket(int x, int y, int z, NBTTagCompound tag) {
-		super(x, y, z, tag);
+	public TileNBTUpdatePacket(BlockPos pos, NBTTagCompound tag) {
+		super(pos, tag);
 	}
 
 	@Override
 	public void handleClientSide(EntityPlayer player) {
 		//TODO Work on this
-		TileEntity te = player.worldObj.getTileEntity(x, y, z);
+		TileEntity te = player.worldObj.getTileEntity(pos);
 		if (te != null) {
 			NBTTagCompound backup = new NBTTagCompound();
 			te.writeToNBT(backup);

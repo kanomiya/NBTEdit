@@ -72,21 +72,21 @@ public class NBTStringHelper {
 	public static String toString(NBTBase base) {
 		switch(base.getId()) {
 		case 1:
-			return "" + ((NBTTagByte)base).func_150290_f();
+			return "" + ((NBTTagByte)base).getByte();
 		case 2:
-			return "" + ((NBTTagShort)base).func_150289_e();
+			return "" + ((NBTTagShort)base).getShort();
 		case 3:
-			return "" + ((NBTTagInt)base).func_150287_d();
+			return "" + ((NBTTagInt)base).getInt();
 		case 4:
-			return "" + ((NBTTagLong)base).func_150291_c();
+			return "" + ((NBTTagLong)base).getLong();
 		case 5:
-			return "" + ((NBTTagFloat)base).func_150288_h();
+			return "" + ((NBTTagFloat)base).getFloat();
 		case 6:
-			return "" + ((NBTTagDouble)base).func_150286_g();
+			return "" + ((NBTTagDouble)base).getDouble();
 		case 7:
 			return base.toString();
 		case 8:
-			return ((NBTTagString)base).func_150285_a_();
+			return ((NBTTagString)base).getString();
 		case 9:
 			return "(TagList)";
 		case 10:

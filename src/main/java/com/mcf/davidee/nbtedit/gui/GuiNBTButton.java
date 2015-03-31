@@ -3,9 +3,12 @@ package com.mcf.davidee.nbtedit.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
 import com.mcf.davidee.nbtedit.NBTStringHelper;
+
+import java.awt.*;
 
 public class GuiNBTButton extends Gui{
 	
@@ -26,28 +29,29 @@ public class GuiNBTButton extends Gui{
 	}
 	public void draw(int mx, int my){
 		mc.renderEngine.bindTexture(GuiNBTNode.WIDGET_TEXTURE);
-		
-		if(inBounds(mx,my)){
-			Gui.drawRect(x, y, x+WIDTH, y+HEIGHT, 0x80ffffff);
+
+		if(inBounds(mx,my)){//checks if the mouse is over the button
+			Gui.drawRect(x, y, x+WIDTH, y+HEIGHT, 0x80ffffff);//draw a grayish background
 			if (hoverTime == -1)
 				hoverTime = System.currentTimeMillis();
 		}
 		else
 			hoverTime = -1;
+
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		drawTexturedModalRect(x, y, (id-1) * 9, 18, WIDTH, HEIGHT);
-		if (!enabled){
-			drawRect(x, y, x+WIDTH, y+HEIGHT, 0xc0222222);
-		}
-		else if (hoverTime != -1 && System.currentTimeMillis() - hoverTime > 300){
+		if(enabled)
+			drawTexturedModalRect(x, y, (id-1) * 9, 18, WIDTH, HEIGHT);//Draw the texture
+
+		if (hoverTime != -1 && System.currentTimeMillis() - hoverTime > 300){
 			drawToolTip(mx,my);
 		}
+
 	}
 	private void drawToolTip(int mx, int my){
 		String s = NBTStringHelper.getButtonName(id);
-		int width = mc.fontRenderer.getStringWidth(s);
+		int width = mc.fontRendererObj.getStringWidth(s);
 		drawRect(mx+4,my+7,mx+5+width,my+17, 0xff000000);
-		mc.fontRenderer.drawString(s, mx+5, my+8, 0xffffff);
+		mc.fontRendererObj.drawString(s, mx+5, my+8, 0xffffff);
 	}
 	public void setEnabled(boolean aFlag){
 		enabled = aFlag;

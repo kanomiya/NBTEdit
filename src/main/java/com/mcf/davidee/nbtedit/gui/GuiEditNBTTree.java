@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraft.util.BlockPos;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -12,6 +13,8 @@ import com.mcf.davidee.nbtedit.NBTEdit;
 import com.mcf.davidee.nbtedit.nbt.NBTTree;
 import com.mcf.davidee.nbtedit.packets.EntityNBTPacket;
 import com.mcf.davidee.nbtedit.packets.TileNBTPacket;
+
+import java.io.IOException;
 
 public class GuiEditNBTTree extends GuiScreen{
 
@@ -28,12 +31,12 @@ public class GuiEditNBTTree extends GuiScreen{
 		screenTitle =  "NBTEdit -- EntityId #" + entityOrX;
 		guiTree = new GuiNBTTree(new NBTTree(tag));
 	}
-	public GuiEditNBTTree(int x, int y, int z, NBTTagCompound tag){
+	public GuiEditNBTTree(BlockPos pos, NBTTagCompound tag){
 		this.entity = false;
-		entityOrX = x;
-		this.y =y;
-		this.z =z;
-		screenTitle =  "NBTEdit -- TileEntity at ("+x+","+y+","+z+")";
+		entityOrX = pos.getX();
+		this.y = pos.getY();
+		this.z = pos.getZ();
+		screenTitle =  "NBTEdit -- TileEntity at "+pos.getX()+","+pos.getY()+","+pos.getZ();
 		guiTree = new GuiNBTTree(new NBTTree(tag));
 	}
 
@@ -73,7 +76,7 @@ public class GuiEditNBTTree extends GuiScreen{
 				guiTree.keyTyped(par1, key);
 		}
 	}
-	protected void mouseClicked(int x, int y, int t) {
+	protected void mouseClicked(int x, int y, int t) throws IOException {
 		if (guiTree.getWindow() == null)
 			super.mouseClicked(x, y, t);
 		if (t == 0)
@@ -82,7 +85,7 @@ public class GuiEditNBTTree extends GuiScreen{
 			guiTree.rightClick(x,y);
 	}
 	
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		int ofs = Mouse.getEventDWheel();
 
@@ -116,7 +119,7 @@ public class GuiEditNBTTree extends GuiScreen{
 		if (entity)
 			NBTEdit.DISPATCHER.sendToServer(new EntityNBTPacket(entityOrX, guiTree.getNBTTree().toNBTTagCompound()));
 		else
-			NBTEdit.DISPATCHER.sendToServer(new TileNBTPacket(entityOrX, y, z, guiTree.getNBTTree().toNBTTagCompound()));
+			NBTEdit.DISPATCHER.sendToServer(new TileNBTPacket(new BlockPos(entityOrX, y, z), guiTree.getNBTTree().toNBTTagCompound()));
 		mc.displayGuiScreen(null);
 		mc.setIngameFocus();
 
@@ -129,7 +132,7 @@ public class GuiEditNBTTree extends GuiScreen{
 	public void drawScreen(int x, int y, float par3) {
 		this.drawDefaultBackground();
 		guiTree.draw( x, y);
-		this.drawCenteredString(mc.fontRenderer, this.screenTitle, this.width / 2, 5, 16777215);
+		this.drawCenteredString(mc.fontRendererObj, this.screenTitle, this.width / 2, 5, 16777215);
 		if (guiTree.getWindow() == null)
 			super.drawScreen(x, y, par3);
 		else
