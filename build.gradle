@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.8"
+version = "1.8-1.8.1"
 group= "com.mcf.davidee.nbtedit"
 archivesBaseName = "NBTEdit"
 
@@ -27,8 +27,8 @@ targetCompatibility = 1.7
 //Intellij sucks a bit with resources
 sourceSets.main { output.resourcesDir = output.classesDir }
 minecraft {
-    version = "1.8-11.14.1.1341"
-    mappings = 'snapshot_20150330'
+    version = "1.8-11.14.1.1371"
+    mappings = 'stable_16'
 }
 
 task deobfJar(type: Jar) {
