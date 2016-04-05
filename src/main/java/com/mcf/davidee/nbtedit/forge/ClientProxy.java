@@ -3,29 +3,29 @@ package com.mcf.davidee.nbtedit.forge;
 import java.io.File;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import org.lwjgl.opengl.GL11;
 
 import com.mcf.davidee.nbtedit.NBTEdit;
 import com.mcf.davidee.nbtedit.gui.GuiEditNBTTree;
 import com.mcf.davidee.nbtedit.nbt.SaveStates;
-
-import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ClientProxy extends CommonProxy {
 
@@ -51,7 +51,7 @@ public class ClientProxy extends CommonProxy {
 			}
 		});
 	}
-	
+
 	@Override
 	public void openEditGUI(final BlockPos pos, final NBTTagCompound tag) {
 		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
@@ -68,19 +68,24 @@ public class ClientProxy extends CommonProxy {
 		if (curScreen instanceof GuiEditNBTTree){
 			GuiEditNBTTree screen = (GuiEditNBTTree)curScreen;
 			Entity e = screen.getEntity();
-			
+
 			if (e != null && e.isEntityAlive())
-				drawBoundingBox(event.context, event.partialTicks,e.getEntityBoundingBox());
+				drawBoundingBox(event.getContext(), event.getPartialTicks(), e.getEntityBoundingBox());
 			else if (screen.isTileEntity()){
 				int x = screen.getBlockX();
 				int y = screen.y;
 				int z = screen.z;
 				World world = Minecraft.getMinecraft().theWorld;
 				BlockPos pos = new BlockPos(x, y, z);
-				Block b = world.getBlockState(pos).getBlock();
-				if (b != null) {
-					b.setBlockBoundsBasedOnState(world, pos);
-					drawBoundingBox(event.context, event.partialTicks, b.getSelectedBoundingBox(world, pos));
+				IBlockState blockState = world.getBlockState(pos);
+
+				if (blockState != null) {
+					Block b = blockState.getBlock();
+					if (b != null)
+					{
+						// TODO b.setBlockBoundsBasedOnState(world, pos); // kanomiya Removed: Necessary?
+						drawBoundingBox(event.getContext(), event.getPartialTicks(), blockState.getSelectedBoundingBox(world, pos));
+					}
 				}
 			}
 		}
@@ -92,9 +97,9 @@ public class ClientProxy extends CommonProxy {
 
 		Entity player = Minecraft.getMinecraft().getRenderViewEntity();
 
-		double var8 = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double)f;
-		double var10 = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double)f;
-		double var12 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double)f;
+		double var8 = player.lastTickPosX + (player.posX - player.lastTickPosX) * f;
+		double var10 = player.lastTickPosY + (player.posY - player.lastTickPosY) * f;
+		double var12 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * f;
 
 		aabb = aabb.addCoord(-var8, -var10, -var12);
 
@@ -106,31 +111,31 @@ public class ClientProxy extends CommonProxy {
 		GlStateManager.depthMask(false);
 
 		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+		VertexBuffer vertexBuffer = tessellator.getBuffer();
 
-		worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(aabb.minX, aabb.minY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.minY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.minY, aabb.maxZ);
-		worldRenderer.pos(aabb.minX, aabb.minY, aabb.maxZ);
-		worldRenderer.pos(aabb.minX, aabb.minY, aabb.minZ);
+		vertexBuffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.pos(aabb.minX, aabb.minY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.minY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ);
+		vertexBuffer.pos(aabb.minX, aabb.minY, aabb.maxZ);
+		vertexBuffer.pos(aabb.minX, aabb.minY, aabb.minZ);
 		tessellator.draw();
-		worldRenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(aabb.minX, aabb.maxY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.maxY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.maxY, aabb.maxZ);
-		worldRenderer.pos(aabb.minX, aabb.maxY, aabb.maxZ);
-		worldRenderer.pos(aabb.minX, aabb.maxY, aabb.minZ);
+		vertexBuffer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.pos(aabb.minX, aabb.maxY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ);
+		vertexBuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ);
+		vertexBuffer.pos(aabb.minX, aabb.maxY, aabb.minZ);
 		tessellator.draw();
-		worldRenderer.begin(1, DefaultVertexFormats.POSITION_COLOR);
-		worldRenderer.pos(aabb.minX, aabb.minY, aabb.minZ);
-		worldRenderer.pos(aabb.minX, aabb.maxY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.minY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.maxY, aabb.minZ);
-		worldRenderer.pos(aabb.maxX, aabb.minY, aabb.maxZ);
-		worldRenderer.pos(aabb.maxX, aabb.maxY, aabb.maxZ);
-		worldRenderer.pos(aabb.minX, aabb.minY, aabb.maxZ);
-		worldRenderer.pos(aabb.minX, aabb.maxY, aabb.maxZ);
+		vertexBuffer.begin(1, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.pos(aabb.minX, aabb.minY, aabb.minZ);
+		vertexBuffer.pos(aabb.minX, aabb.maxY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.minY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.maxY, aabb.minZ);
+		vertexBuffer.pos(aabb.maxX, aabb.minY, aabb.maxZ);
+		vertexBuffer.pos(aabb.maxX, aabb.maxY, aabb.maxZ);
+		vertexBuffer.pos(aabb.minX, aabb.minY, aabb.maxZ);
+		vertexBuffer.pos(aabb.minX, aabb.maxY, aabb.maxZ);
 		tessellator.draw();
 
 		GlStateManager.depthMask(true);

@@ -1,25 +1,24 @@
 package com.mcf.davidee.nbtedit.packets;
 
-import static com.mcf.davidee.nbtedit.NBTEdit.SECTION_SIGN;
-
-import com.mcf.davidee.nbtedit.NBTEdit;
-
+import static com.mcf.davidee.nbtedit.NBTEdit.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+
+import com.mcf.davidee.nbtedit.NBTEdit;
 
 public class TileRequestPacket extends AbstractPacket {
-	
+
 	private BlockPos pos;
-	
+
 	public TileRequestPacket() {
-		
+
 	}
-	
+
 	public TileRequestPacket(BlockPos pos) {
 		this.pos = pos;
 	}
@@ -37,7 +36,7 @@ public class TileRequestPacket extends AbstractPacket {
 	}
 
 	@Override
-	public void handleClientSide(EntityPlayer player) { 
+	public void handleClientSide(EntityPlayer player) {
 
 	}
 

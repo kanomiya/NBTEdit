@@ -8,12 +8,12 @@ import net.minecraft.command.NumberInvalidException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 
 import com.mcf.davidee.nbtedit.packets.EntityRequestPacket;
 import com.mcf.davidee.nbtedit.packets.MouseOverPacket;
 import com.mcf.davidee.nbtedit.packets.TileRequestPacket;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 
 
 public class CommandNBTEdit extends CommandBase{
@@ -29,9 +29,9 @@ public class CommandNBTEdit extends CommandBase{
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] var2) throws NumberInvalidException, WrongUsageException {
+	public void execute(MinecraftServer server, ICommandSender sender, String[] var2) throws NumberInvalidException, WrongUsageException {
 		if (var2.length == 0) {
-			sender.addChatMessage(new ChatComponentText("" + sender.getEntityWorld().isRemote));
+			// sender.addChatMessage(new TextComponentString("" + sender.getEntityWorld().isRemote)); ??
 		}
 		if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = (EntityPlayerMP)sender;
@@ -65,8 +65,10 @@ public class CommandNBTEdit extends CommandBase{
 		}
 	}
 
-	public boolean canCommandSenderUseCommand(ICommandSender s) {
-		return s instanceof EntityPlayer && (super.canCommandSenderUseCommand(s) || !NBTEdit.opOnly && ((EntityPlayer)s).capabilities.isCreativeMode);
+	@Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender s)
+	{
+		return s instanceof EntityPlayer && (super.checkPermission(server, s) || !NBTEdit.opOnly && ((EntityPlayer)s).capabilities.isCreativeMode);
 	}
 
 }

@@ -3,28 +3,26 @@ package com.mcf.davidee.nbtedit.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
 import com.mcf.davidee.nbtedit.NBTStringHelper;
 
-import java.awt.*;
 
 public class GuiNBTButton extends Gui{
-	
+
 	public static final int WIDTH = 9, HEIGHT = 9;
-	
+
 	private Minecraft mc = Minecraft.getMinecraft();
-	
+
 	private byte id;
 	private int x, y;
 	private boolean enabled;
-	
+
 	private long hoverTime;
-	
+
 	public GuiNBTButton(byte id, int x, int y){
 		this.id = id;
-		this.x = x; 
+		this.x = x;
 		this.y = y;
 	}
 	public void draw(int mx, int my){

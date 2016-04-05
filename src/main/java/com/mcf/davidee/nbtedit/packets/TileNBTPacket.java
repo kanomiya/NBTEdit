@@ -1,6 +1,6 @@
 package com.mcf.davidee.nbtedit.packets;
 
-import static com.mcf.davidee.nbtedit.NBTEdit.SECTION_SIGN;
+import static com.mcf.davidee.nbtedit.NBTEdit.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -14,20 +14,20 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 import com.mcf.davidee.nbtedit.NBTEdit;
 import com.mcf.davidee.nbtedit.NBTHelper;
-import net.minecraft.util.BlockPos;
 
 public class TileNBTPacket extends AbstractPacket {
-	
+
 	protected BlockPos pos;
 	protected NBTTagCompound tag;
-	
+
 	public TileNBTPacket() {
-		
+
 	}
-	
+
 	public TileNBTPacket(BlockPos pos, NBTTagCompound tag) {
 		this.pos = pos;
 		this.tag = tag;

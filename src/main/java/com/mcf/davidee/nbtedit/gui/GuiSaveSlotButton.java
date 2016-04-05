@@ -3,8 +3,8 @@ package com.mcf.davidee.nbtedit.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -53,14 +53,14 @@ public class GuiSaveSlotButton extends Gui {
 			drawCenteredString(mc.fontRendererObj, "x", x-GAP-X_SIZE/2, y + 6, textColor);
 		}
 	}
-	
+
 	private void renderVanillaButton(int x, int y, int u, int v, int width, int height){
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
-		
+
 		//Top Left
 		this.drawTexturedModalRect(x, y, u, v, width/2, height/2);
-		//Top Right 
+		//Top Right
 		this.drawTexturedModalRect(x+width/2, y, u +200 - width /2, v, width/2, height/2);
 		//Bottom Left
 		this.drawTexturedModalRect(x, y+height/2, u, v+20-height/2, width/2, height/2);

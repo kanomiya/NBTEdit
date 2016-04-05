@@ -1,6 +1,6 @@
 package com.mcf.davidee.nbtedit.gui;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -14,12 +14,12 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -36,9 +36,9 @@ import com.mcf.davidee.nbtedit.nbt.SaveStates;
 
 /*
  * The main Gui class for NBTEdit. This implementation is messy, naive, and unoptimized, but it works.
- * This is from long before GuiLib (and is actually my motivation for GuiLib), but sadly I do not 
+ * This is from long before GuiLib (and is actually my motivation for GuiLib), but sadly I do not
  * have time to rewrite it.
- * 
+ *
  * Issues:
  *    - Not extensible - a separate tree GUI class for GuiLib would be nice.
  *    - Naive/unoptimized - layout changes force an entire reload of the tree
@@ -236,10 +236,10 @@ public class GuiNBTTree extends Gui{
 	}
 
 	private void addNodes(Node<NamedNBT> node, int x) {
-		nodes.add(new GuiNBTNode(this, node, x, y)); 
+		nodes.add(new GuiNBTNode(this, node, x, y));
 		x += X_GAP;
 		y += Y_GAP;
-		
+
 		if (node.shouldDrawChildren())
 			for (Node<NamedNBT> child : node.getChildren())
 				addNodes(child,x);
@@ -288,7 +288,7 @@ public class GuiNBTTree extends Gui{
 					if (length > bottom - (START_Y-1) - 8)
 						length = bottom - (START_Y-1) - 8;
 
-					scrollMultiplier /= (float)(this.bottom - (START_Y - 1) - length) / (float) height;
+					scrollMultiplier /= (float)(bottom - (START_Y - 1) - length) / (float) height;
 
 
 
@@ -308,7 +308,7 @@ public class GuiNBTTree extends Gui{
 				length = 32;
 			if (length > bottom - (START_Y-1) - 8)
 				length = bottom - (START_Y-1) - 8;
-			int y = -offset * (this.bottom - (START_Y-1) - length) / heightDiff + (START_Y-1);
+			int y = -offset * (bottom - (START_Y-1) - length) / heightDiff + (START_Y-1);
 
 			if (y < START_Y-1)
 				y = START_Y-1;
@@ -326,18 +326,18 @@ public class GuiNBTTree extends Gui{
 	protected void overlayBackground(int par1, int par2, int par3, int par4)
 	{
 		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+		VertexBuffer vertexBuffer = tessellator.getBuffer();
 		mc.renderEngine.bindTexture(optionsBackground);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		float var6 = 32.0F;
-		worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
 		Color color = new Color(4210752);
-		worldRenderer.color(color.getRed(), color.getGreen(), color.getBlue(), par4);
-		worldRenderer.pos(0.0D, (double)par2, 0.0D).tex(0.0D, (double)((float)par2 / var6));
-		worldRenderer.pos((double)this.width, (double)par2, 0.0D).tex ((double)((float)this.width / var6), (double)((float)par2 / var6));
-		worldRenderer.color(color.getRed(), color.getGreen(), color.getBlue(), par3);
-		worldRenderer.pos((double)this.width, (double)par1, 0.0D).tex ((double)((float)this.width / var6), (double)((float)par1 / var6));
-		worldRenderer.pos(0.0D, (double)par1, 0.0D).tex(0.0D, (double)((float)par1 / var6));
+		vertexBuffer.color(color.getRed(), color.getGreen(), color.getBlue(), par4);
+		vertexBuffer.pos(0.0D, par2, 0.0D).tex(0.0D, par2 / var6);
+		vertexBuffer.pos(width, par2, 0.0D).tex (width / var6, par2 / var6);
+		vertexBuffer.color(color.getRed(), color.getGreen(), color.getBlue(), par3);
+		vertexBuffer.pos(width, par1, 0.0D).tex (width / var6, par1 / var6);
+		vertexBuffer.pos(0.0D, par1, 0.0D).tex(0.0D, par1 / var6);
 		tessellator.draw();
 	}
 
@@ -364,7 +364,7 @@ public class GuiNBTTree extends Gui{
 					if (button.inBoundsOfX(mx, my)){
 						button.reset();
 						NBTEdit.getSaveStates().save();
-						mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+						mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
 						return;
 					}
 					if (button.inBounds(mx, my)){
@@ -388,7 +388,7 @@ public class GuiNBTTree extends Gui{
 			else
 				initGUI();
 		}
-		else 
+		else
 			window.click(mx, my);
 	}
 
@@ -412,7 +412,7 @@ public class GuiNBTTree extends Gui{
 				button.save.tag.setTag(name, base.copy());
 			button.saved();
 			NBTEdit.getSaveStates().save();
-			mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
 		}
 		else{ //Paste into
 			Map<String, NBTBase> nbtMap = NBTHelper.getMap(button.save.tag);
@@ -423,7 +423,7 @@ public class GuiNBTTree extends Gui{
 			else{
 				if (focused == null)
 					setFocused(tree.getRoot());
-				
+
 				Entry<String, NBTBase> firstEntry =  (Entry<String, NBTBase>) nbtMap.entrySet().toArray()[0];
 				assert firstEntry != null;
 				String name = firstEntry.getKey();
@@ -432,7 +432,7 @@ public class GuiNBTTree extends Gui{
 					setFocused(null);
 					tree = new NBTTree((NBTTagCompound)nbt);
 					initGUI();
-					mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
 				}
 				else if (canAddToParent(focused.getObject().getNBT(), nbt)){
 					focused.setDrawChildren(true);
@@ -447,7 +447,7 @@ public class GuiNBTTree extends Gui{
 					tree.sort(node);
 					setFocused(node);
 					initGUI(true);
-					mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
 				}
 			}
 		}
@@ -548,10 +548,10 @@ public class GuiNBTTree extends Gui{
 			if (focused.hasChildren() &&  (base instanceof NBTTagCompound || base instanceof NBTTagList)){
 				focused.setDrawChildren(!focused.shouldDrawChildren());
 				int index;
-				
+
 				if(focused.shouldDrawChildren() && (index = indexOf(focused)) != -1)
 					offset =  (START_Y+1) - nodes.get(index).y + offset;
-				
+
 				initGUI();
 			}
 			else if (buttons[11].isEnabled()){
@@ -576,11 +576,11 @@ public class GuiNBTTree extends Gui{
 	private boolean canPaste() {
 		return NBTEdit.clipboard != null && focused != null && canAddToParent(focused.getObject().getNBT(), NBTEdit.clipboard.getNBT());
 	}
-	
+
 	private void paste() {
 		if (NBTEdit.clipboard != null){
 			focused.setDrawChildren(true);
-			
+
 			NamedNBT namedNBT = NBTEdit.clipboard.copy();
 			if (focused.getObject().getNBT() instanceof NBTTagList){
 				namedNBT.setName("");
@@ -611,7 +611,7 @@ public class GuiNBTTree extends Gui{
 			initGUI(true);
 		}
 	}
-	
+
 	private void copy(){
 		if (focused != null){
 			NamedNBT namedNBT = focused.getObject();
@@ -664,7 +664,7 @@ public class GuiNBTTree extends Gui{
 		}
 		return -1;
 	}
-	
+
 	private void shiftFocus(boolean up){
 		int index = indexOf(focused);
 		if (index != -1){
@@ -693,7 +693,7 @@ public class GuiNBTTree extends Gui{
 			dif = -heightDiff;
 		for (GuiNBTNode node : nodes)
 			node.shift(dif-offset);
-		offset = dif; 
+		offset = dif;
 	}
 
 	public void closeWindow() {
@@ -734,7 +734,7 @@ public class GuiNBTTree extends Gui{
 						NBTEdit.getSaveStates().save();
 					}
 					else //Already editing the correct one!
-						return; 
+						return;
 				}
 				saves[i].startEditing();
 				focusedSlotIndex = i;
@@ -743,14 +743,16 @@ public class GuiNBTTree extends Gui{
 		}
 	}
 
-	private void putColor(WorldRenderer renderer, int argb, int p_178988_2_)
+	/*
+	private void putColor(VertexBuffer vertexBuffer, int argb, int p_178988_2_)
 	{
-		int i = renderer.getColorIndex(p_178988_2_);
+		int i = vertexBuffer.getColorIndex(p_178988_2_);
 		int j = argb >> 16 & 255;
 		int k = argb >> 8 & 255;
 		int l = argb & 255;
 		int i1 = argb >> 24 & 255;
-		renderer.putColorRGBA(i, j, k, l, i1);
+		vertexBuffer.putColorRGBA(i, j, k, l, i1);
 	}
+	*/
 
 }

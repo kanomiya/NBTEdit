@@ -1,12 +1,12 @@
 package com.mcf.davidee.nbtedit.packets;
 
-import com.mcf.davidee.nbtedit.NBTEdit;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+
+import com.mcf.davidee.nbtedit.NBTEdit;
 
 public class TileNBTUpdatePacket extends TileNBTPacket {
 

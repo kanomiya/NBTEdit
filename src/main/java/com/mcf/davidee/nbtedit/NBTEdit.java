@@ -10,14 +10,6 @@ import net.minecraft.command.ServerCommandManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
-
-import com.mcf.davidee.nbtedit.forge.CommonProxy;
-import com.mcf.davidee.nbtedit.nbt.NBTNodeSorter;
-import com.mcf.davidee.nbtedit.nbt.NBTTree;
-import com.mcf.davidee.nbtedit.nbt.NamedNBT;
-import com.mcf.davidee.nbtedit.nbt.SaveStates;
-import com.mcf.davidee.nbtedit.packets.PacketPipeline;
-
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -28,12 +20,19 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
+import com.mcf.davidee.nbtedit.forge.CommonProxy;
+import com.mcf.davidee.nbtedit.nbt.NBTNodeSorter;
+import com.mcf.davidee.nbtedit.nbt.NBTTree;
+import com.mcf.davidee.nbtedit.nbt.NamedNBT;
+import com.mcf.davidee.nbtedit.nbt.SaveStates;
+import com.mcf.davidee.nbtedit.packets.PacketPipeline;
+
 @Mod(modid = NBTEdit.MODID, name = NBTEdit.NAME,  version = NBTEdit.VERSION, acceptableRemoteVersions="*")
 public class NBTEdit {
 
 	public static final String MODID = "NBTEdit";
 	public static final String NAME = "In-game NBTEdit";
-	public static final String VERSION = "1.8.9-1.0";
+	public static final String VERSION = "1.9-1.0";
 
 	private static final String SEP = System.getProperty("line.separator");
 	public static final NBTNodeSorter SORTER = new NBTNodeSorter();
@@ -130,7 +129,6 @@ public class NBTEdit {
 		m.modId = MODID;
 		m.version = VERSION;
 		m.name = NAME;
-		m.updateUrl = "";
 		m.authorList.add("Davidee");
 
 		m.credits = "Thanks to Mojang, Forge, and all your support.";
