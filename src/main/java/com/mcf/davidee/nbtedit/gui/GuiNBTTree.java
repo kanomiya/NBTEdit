@@ -327,7 +327,7 @@ public class GuiNBTTree extends Gui{
 	{
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer vertexBuffer = tessellator.getBuffer();
-		mc.renderEngine.bindTexture(optionsBackground);
+		mc.renderEngine.bindTexture(OPTIONS_BACKGROUND);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		float var6 = 32.0F;
 		vertexBuffer.begin(7, DefaultVertexFormats.POSITION_COLOR);
@@ -364,7 +364,7 @@ public class GuiNBTTree extends Gui{
 					if (button.inBoundsOfX(mx, my)){
 						button.reset();
 						NBTEdit.getSaveStates().save();
-						mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
+						mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 						return;
 					}
 					if (button.inBounds(mx, my)){
@@ -412,7 +412,7 @@ public class GuiNBTTree extends Gui{
 				button.save.tag.setTag(name, base.copy());
 			button.saved();
 			NBTEdit.getSaveStates().save();
-			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
+			mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 		}
 		else{ //Paste into
 			Map<String, NBTBase> nbtMap = NBTHelper.getMap(button.save.tag);
@@ -432,7 +432,7 @@ public class GuiNBTTree extends Gui{
 					setFocused(null);
 					tree = new NBTTree((NBTTagCompound)nbt);
 					initGUI();
-					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 				}
 				else if (canAddToParent(focused.getObject().getNBT(), nbt)){
 					focused.setDrawChildren(true);
@@ -447,7 +447,7 @@ public class GuiNBTTree extends Gui{
 					tree.sort(node);
 					setFocused(node);
 					initGUI(true);
-					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.ui_button_click, 1.0F));
+					mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 				}
 			}
 		}
