@@ -1,26 +1,26 @@
 buildscript {
-    repositories {
-        jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
-    }
+	repositories {
+		jcenter()
+		maven {
+			name = "forge"
+			url = "http://files.minecraftforge.net/maven"
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+	}
 }
 repositories {
-    mavenCentral()
-    maven {
-        name = "sonatype"
-        url 'http://oss.sonatype.org/content/repositories/snapshots'
-    }
+	mavenCentral()
+	maven {
+		name = "sonatype"
+		url 'http://oss.sonatype.org/content/repositories/snapshots'
+	}
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.9-1.1"
+version = "1.9.4-1.1"
 group= "com.mcf.davidee.nbtedit"
 archivesBaseName = "NBTEdit"
 
@@ -30,31 +30,32 @@ targetCompatibility = 1.7
 idea { module { inheritOutputDirs = true } }
 
 minecraft {
-	version = "1.9-12.16.0.1865-1.9"
-    runDir = "run"
-	mappings = "snapshot_20160416"
-    //makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+	version = "1.9.4-12.17.0.1909-1.9.4"
+	runDir = "run"
+
+	mappings = "snapshot_20160518"
+	//makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    appendix = 'deobf'
+	from sourceSets.main.output
+	appendix = 'deobf'
 }
 
 tasks.build.dependsOn('sourceJar', 'deobfJar')
 
 processResources {
-    from (sourceSets.main.resources.srcDirs) {
-        include '**/*.info'
-         expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-    from(sourceSets.main.resources.srcDirs) { exclude '**/*.info' }
+	from (sourceSets.main.resources.srcDirs) {
+		include '**/*.info'
+		expand 'version':project.version, 'mcversion':project.minecraft.version
+	}
+	from(sourceSets.main.resources.srcDirs) { exclude '**/*.info' }
 }
 
 allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-    }
+	gradle.projectsEvaluated {
+		tasks.withType(JavaCompile) {
+			options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+		}
+	}
 }
