@@ -1,25 +1,25 @@
 package com.mcf.davidee.nbtedit.packets;
 
 import static com.mcf.davidee.nbtedit.NBTEdit.*;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufInputStream;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.channel.ChannelHandlerContext;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import com.mcf.davidee.nbtedit.NBTEdit;
+import com.mcf.davidee.nbtedit.NBTHelper;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketSetExperience;
 import net.minecraft.network.play.server.SPacketUpdateHealth;
-import net.minecraft.world.WorldSettings.GameType;
-
-import com.mcf.davidee.nbtedit.NBTEdit;
-import com.mcf.davidee.nbtedit.NBTHelper;
+import net.minecraft.world.GameType;
 
 public class EntityNBTPacket extends AbstractPacket {
 
