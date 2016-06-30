@@ -6,6 +6,13 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.mcf.davidee.nbtedit.forge.CommonProxy;
+import com.mcf.davidee.nbtedit.nbt.NBTNodeSorter;
+import com.mcf.davidee.nbtedit.nbt.NBTTree;
+import com.mcf.davidee.nbtedit.nbt.NamedNBT;
+import com.mcf.davidee.nbtedit.nbt.SaveStates;
+import com.mcf.davidee.nbtedit.packets.PacketPipeline;
+
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -20,19 +27,12 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-import com.mcf.davidee.nbtedit.forge.CommonProxy;
-import com.mcf.davidee.nbtedit.nbt.NBTNodeSorter;
-import com.mcf.davidee.nbtedit.nbt.NBTTree;
-import com.mcf.davidee.nbtedit.nbt.NamedNBT;
-import com.mcf.davidee.nbtedit.nbt.SaveStates;
-import com.mcf.davidee.nbtedit.packets.PacketPipeline;
-
 @Mod(modid = NBTEdit.MODID, name = NBTEdit.NAME,  version = NBTEdit.VERSION, acceptableRemoteVersions="*")
 public class NBTEdit {
 
 	public static final String MODID = "NBTEdit";
 	public static final String NAME = "In-game NBTEdit";
-	public static final String VERSION = "1.9-1.0";
+	public static final String VERSION = "@VERSION@";
 
 	private static final String SEP = System.getProperty("line.separator");
 	public static final NBTNodeSorter SORTER = new NBTNodeSorter();
