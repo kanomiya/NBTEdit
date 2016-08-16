@@ -1,11 +1,13 @@
 package com.mcf.davidee.nbtedit;
 
+import com.google.common.base.Strings;
+import com.mcf.davidee.nbtedit.nbt.NamedNBT;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagEnd;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagIntArray;
@@ -13,9 +15,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
-
-import com.google.common.base.Strings;
-import com.mcf.davidee.nbtedit.nbt.NamedNBT;
 
 public class NBTStringHelper {
 
@@ -41,7 +40,8 @@ public class NBTStringHelper {
 		switch (type)
 		{
 		case 0:
-			return new NBTTagEnd();
+		//	return new NBTTagEnd();  // NBTTagEnd constructor is invisible
+		    return null;
 		case 1:
 			return new NBTTagByte((byte) 0);
 		case 2:
@@ -102,7 +102,7 @@ public class NBTStringHelper {
 		switch(id){
 		case 1 :
 			return "Byte";
-		case 2: 
+		case 2:
 			return "Short";
 		case 3:
 			return "Int";
@@ -112,7 +112,7 @@ public class NBTStringHelper {
 			return "Float";
 		case 6:
 			return "Double";
-		case 7: 
+		case 7:
 			return "Byte[]";
 		case 8:
 			return "String";

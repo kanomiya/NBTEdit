@@ -30,7 +30,7 @@ targetCompatibility = 1.7
 idea { module { inheritOutputDirs = true } }
 
 minecraft {
-	version = "1.10.2-12.18.0.2004-1.10.0"
+	version = "1.10.2-12.18.1.2065"
 	runDir = "run"
 
 	mappings = "snapshot_20160518"
